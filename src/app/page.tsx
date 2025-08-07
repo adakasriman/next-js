@@ -6,30 +6,29 @@ import {
   signOut,
 } from '@workos-inc/authkit-nextjs';
 import ExcelUpload from './components/UploadExcel';
+import Link from 'next/link';
 
 export default async function HomePage() {
   const { user } = await withAuth();
 
   if (!user) {
-    const [signInUrl, signUpUrl] = await Promise.all([
-      getSignInUrl(),
-      getSignUpUrl(),
-    ]);
+    const signInUrl = await getSignInUrl();
+    const signUpUrl = await getSignUpUrl();
 
     return (
       <main>
         <h1>Please sign in or sign up</h1>
         <div style={{ display: 'flex', gap: '1rem' }}>
-          <a href={signInUrl}>Sign In</a>
-          <a href={signUpUrl}>Sign Up</a>
+          <Link href={signInUrl}>Sign In</Link>
+          <Link href={signUpUrl}>Sign Up</Link>
         </div>
       </main>
     );
   }
 
-  async function handleSignOut() {
+  const handleSignOut = async () => {
     'use server';
-    await signOut();
+    return await signOut();
   }
 
   return (
