@@ -12,10 +12,36 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-        const data = await prisma.property.findMany()
+
+        const { searchParams } = new URL(req.url);
+        const page = parseInt(searchParams.get('page') || '1');
+        const limit = parseInt(searchParams.get('limit') || '10');
+        const skip = (page - 1) * limit;
+
+        // Get total count of users (for pagination metadata)
+        const total = await prisma.property.count();
+
+
+        const data = await prisma.property.findMany({
+            skip,
+            take: limit,
+        })
+        const serializedProperties = data.map(property => ({
+            ...property,
+            total_documents_size_bytes: property.total_documents_size_bytes.toString(),
+            allowed_documents_size_bytes: property.allowed_documents_size_bytes.toString()
+        }));
         return NextResponse.json({
             success: true,
-            data: data
+            data: serializedProperties,
+            pagination: {
+                total,
+                totalPages: Math.ceil(total / limit),
+                currentPage: page,
+                limit,
+                hasNextPage: page * limit < total,
+                hasPreviousPage: page > 1,
+            }
         })
 
     } catch (error: any) {
@@ -79,8 +105,8 @@ export async function POST(req: NextRequest) {
         // Validate and transform data
         const createData = jsonData.map((item: any) => {
             // Basic validation - customize based on your schema
-            if (!item.unit_number) {
-                throw new Error('Missing required field: unit_number')
+            if (!item.name || !item.city || !item.state || !item.pincode) {
+                throw new Error('Missing required field: name or city or state or pincode')
             }
             return item;
         })

@@ -2,15 +2,18 @@ import { baseApi } from '@/features/api/apiSlice';
 
 export const propertiesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    getProperties: builder.query<any[], void>({
-      query: () => 'properties',
+    getProperties: builder.query<any, { page: number; limit: number }>({
+      query: ({ page = 1, limit = 10 }) => ({
+        url: 'properties',
+        params: { page, limit },
+      }),
       providesTags: ['Properties'],
     }),
     createProperty: builder.mutation<any, any>({
       query: (body) => ({
         url: 'properties',
         method: 'POST',
-        body,
+        body,   
       }),
       invalidatesTags: ['Properties'],
     }),
