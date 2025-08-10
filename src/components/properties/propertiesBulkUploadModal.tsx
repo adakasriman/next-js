@@ -10,11 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState, useRef } from 'react';
-import axios from 'axios';
-import { useCreateUserMutation } from '@/features/users/usersApi';
+import { useCreatePropertyMutation } from '@/features/properties/propertiesApi';
+import toast from "react-hot-toast";
 
 export default function BulkUploadModal() {
-    const [createUser] = useCreateUserMutation();
+  const [createProperty] = useCreatePropertyMutation();
+  const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
@@ -56,17 +57,35 @@ export default function BulkUploadModal() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const res: any = await createUser(formData);
-      if (res.error) {
-        setError(res.error.data.message || 'Failed to upload file.');
+      const result: any = await createProperty(formData);
+      if (result.data) {
+        setFile(null);
+        toast.success("Excel submitted successfully");
+        handleDialogClose();
+
+        if (fileInputRef.current) fileInputRef.current.value = '';
+      } else {
+        setError('Failed to upload file.');
       }
     } catch (error: any) {
-      setError(error.response.data.message || 'Error uploading file.');
+      setError('Error uploading file.');
     }
   };
 
+  const handleDialogClose = () => {
+    setFile(null);
+    setError?.('');
+    setIsOpen(false);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   return (
-    <Dialog>
+    <Dialog open={isOpen} onOpenChange={(open) => {
+      setIsOpen(open);
+      if (!open) {
+        handleDialogClose();
+      }
+    }}>
       <DialogTrigger asChild>
         <Button variant="outline">Bulk Upload</Button>
       </DialogTrigger>
@@ -87,7 +106,7 @@ export default function BulkUploadModal() {
             ref={fileInputRef}
             className="w-full"
           />
-          
+
           {error && <p className="text-red-600 text-sm">{error}</p>}
           {message && <p className="text-green-600 text-sm">{message}</p>}
 
