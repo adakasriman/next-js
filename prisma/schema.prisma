@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  user_id         String  @id @default(cuid())
+  email           String  @unique                         
+  google_auth_sub String?
+  first_name      String?
+  last_name       String?
+  phone_number    String?
+
+  user_type              String?
+  meta_status            String?
+  is_deleted             Boolean  @default(false)
+  created_at             DateTime @default(now()) @db.Timestamptz(6)
+  updated_at             DateTime @default(now()) @db.Timestamptz(6)
+  meta_data              Json?
+  status                 String?
+  supabase_auth_id       String?  @unique
+  secondary_email        String?
+  is_id_verified         Boolean?
+  secondary_phone_number String?
+  address                String?
+  id_number              String?
+  id_type                String?
+  Unit                   Unit[]
+}
+
+model Property {
+  property_id                     String   @id @default(cuid())
+  name                            String
+  street_address                  String?
+  locality                        String?
+  city                            String
+  state                           String
+  pincode                         String   @db.VarChar(6)
+  country                         String   @default("India")
+  property_type                   String?
+  default_monthly_maintenance_fee Decimal  @default(0.00) @db.Decimal(10, 2)
+  maintenance_fee_per_sft         Decimal  @default(0.00) @db.Decimal(10, 2)
+  meta_status                     String?
+  is_deleted                      Boolean  @default(false)
+  created_at                      DateTime @default(now()) @db.Timestamptz(6)
+  updated_at                      DateTime @default(now()) @db.Timestamptz(6)
+  meta_data                       Json?
+  status                          String?
+  total_documents_count           Int      @default(0)
+  total_documents_size_bytes      BigInt   @default(0)
+  allowed_documents_size_bytes    BigInt   @default(1073741824)
+  Unit                            Unit[]
+}
+
+model Unit {
+  unit_id String @id @default(cuid())
+
+  owner_id String?
+  owner    User?   @relation(fields: [owner_id], references: [user_id], onDelete: SetNull)
+
+  property_id String
+  property    Property @relation(fields: [property_id], references: [property_id], onDelete: Cascade)
+
+  unit_number_or_name     String
+  floor_number            String?
+  bedrooms                Int?
+  bathrooms               Decimal? @db.Decimal(3, 1)
+  square_footage          Decimal? @db.Decimal(10, 2)
+  monthly_maintenance_fee Decimal? @db.Decimal(10, 2)
+  occupancy_status        String?
+  meta_status             String?
+  is_deleted              Boolean  @default(false)
+  created_at              DateTime @default(now()) @db.Timestamptz(6)
+  updated_at              DateTime @default(now()) @db.Timestamptz(6)
+  vehicle_parking_space   String?
+  total_due               Int      @default(0)
+  unit_balance            Int      @default(0)
+}

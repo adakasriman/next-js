@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { uploadExcelFile } from '../lib/api/uploadExcel';
+import { uploadExcelFile } from '../app/lib/api/uploadExcel';
 
 export default function UploadExcel() {
   const [data, setData] = useState<any>(null);

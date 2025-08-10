@@ -1,0 +1,20 @@
+export const unitHeaders = [
+    { header: "Unit ID", accessorKey: "unit_id" },
+    { header: "Owner ID", accessorKey: "owner_id" },
+    { header: "Property ID", accessorKey: "property_id" },
+    { header: "Unit Number / Name", accessorKey: "unit_number_or_name" },
+    { header: "Floor Number", accessorKey: "floor_number" },
+    { header: "Bedrooms", accessorKey: "bedrooms" },
+    { header: "Bathrooms", accessorKey: "bathrooms" },
+    { header: "Square Footage", accessorKey: "square_footage" },
+    { header: "Monthly Maintenance Fee", accessorKey: "monthly_maintenance_fee" },
+    { header: "Occupancy Status", accessorKey: "occupancy_status" },
+    { header: "Meta Status", accessorKey: "meta_status" },
+    { header: "Is Deleted", accessorKey: "is_deleted" },
+    { header: "Created At", accessorKey: "created_at" },
+    { header: "Updated At", accessorKey: "updated_at" },
+    { header: "Vehicle Parking Space", accessorKey: "vehicle_parking_space" },
+    { header: "Total Due", accessorKey: "total_due" },
+    { header: "Unit Balance", accessorKey: "unit_balance" },
+  ]
+  

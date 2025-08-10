@@ -1,11 +1,24 @@
 import './globals.css';
-import { AuthKitProvider } from '@workos-inc/authkit-nextjs/components';
+import Header from '@/components/Header';
+import AuthProviderWrapper from '@/app/providers/AuthProviderWrapper';
+import { ReduxProvider } from '@/app/providers';
+import { Toaster } from "react-hot-toast";
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>
-        <AuthKitProvider>{children}</AuthKitProvider>
+        <AuthProviderWrapper>
+          <ReduxProvider>
+            <Header />
+            {children}
+            <Toaster />
+          </ReduxProvider>
+        </AuthProviderWrapper>
       </body>
     </html>
   );

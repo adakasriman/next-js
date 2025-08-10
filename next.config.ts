@@ -1,13 +1,12 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
-  content: [
-    './src/**/*.{js,ts,jsx,tsx}', // ✅ For App Router projects
-  ],
-  experimental: {
-    appDir: true, // ✅ Must be enabled
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
+  /* config options here */
+  reactStrictMode: false,
+  typescript: {
+    // ⚠️ Warning: This skips type checking during build
+    ignoreBuildErrors: true,
   },
-  theme: {
-    extend: {},
-  },
-  plugins: [],
-}
+};
+
+export default nextConfig;

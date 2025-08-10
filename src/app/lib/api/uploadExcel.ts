@@ -1,4 +1,5 @@
 // src/lib/api/uploadExcel.ts
+'use client';
 import axios from 'axios';
 
 export const uploadExcelFile = async (formData: FormData) => {
