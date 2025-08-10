@@ -26,6 +26,8 @@ interface DataTableProps<T> {
   headers: Header[]
   items: T[]
   pageSize: number
+  totalCount: number
+  totalPages: number
   currentPage: number
   onPageChange: (newPage: number) => void
 }
@@ -34,28 +36,26 @@ export function DataTable<T extends Record<string, any>>({
   headers,
   items,
   pageSize,
+  totalPages,
+  totalCount,
   currentPage,
   onPageChange,
 }: DataTableProps<T>) {
-  const totalPages = Math.ceil(items.length / pageSize)
-  const startIndex = currentPage * pageSize
-  const endIndex = startIndex + pageSize
-  const paginatedItems = items.slice(startIndex, endIndex)
 
   const handlePreviousPage = () => {
-    onPageChange(Math.max(currentPage - 1, 0))
+    onPageChange(currentPage - 1)
   }
 
   const handleNextPage = () => {
-    onPageChange(Math.min(currentPage + 1, totalPages - 1))
+    onPageChange(currentPage + 1)
   }
 
   const handleFirstPage = () => {
-    onPageChange(0)
+    onPageChange(1)
   }
 
   const handleLastPage = () => {
-    onPageChange(totalPages - 1)
+    onPageChange(totalPages)
   }
 
   return (
@@ -70,11 +70,11 @@ export function DataTable<T extends Record<string, any>>({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedItems.length > 0 ? (
-              paginatedItems.map((item, idx) => (
-                <TableRow key={startIndex + idx}>
+            {items.length > 0 ? (
+              items.map((item, idx) => (
+                <TableRow key={idx}>
                   {headers.map(({ accessorKey }) => (
-                    <TableCell key={`${startIndex + idx}-${accessorKey}`}>
+                    <TableCell key={`${idx}-${accessorKey}`}>
                       {item[accessorKey] ?? "-"}
                     </TableCell>
                   ))}
@@ -96,15 +96,15 @@ export function DataTable<T extends Record<string, any>>({
 
       <div className="flex items-center justify-between px-4 py-2">
         <div className="text-sm text-muted-foreground">
-          Showing {items.length === 0 ? 0 : startIndex + 1}-
-          {Math.min(endIndex, items.length)} of {items.length} items
+          Showing {(currentPage - 1) * pageSize + 1}-
+          {(currentPage - 1) * pageSize + items.length} of {totalCount} items
         </div>
         <div className="flex items-center space-x-2">
           <Button
             variant="outline"
             size="sm"
             onClick={handleFirstPage}
-            disabled={currentPage === 0}
+            disabled={currentPage === 1}
           >
             <ChevronsLeft className="h-4 w-4" />
           </Button>
@@ -112,18 +112,18 @@ export function DataTable<T extends Record<string, any>>({
             variant="outline"
             size="sm"
             onClick={handlePreviousPage}
-            disabled={currentPage === 0}
+            disabled={currentPage === 1}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <span className="text-sm font-medium">
-            Page {currentPage + 1} of {totalPages}
+            Page {currentPage} of {totalPages}
           </span>
           <Button
             variant="outline"
             size="sm"
             onClick={handleNextPage}
-            disabled={currentPage >= totalPages - 1}
+            disabled={currentPage === totalPages}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -131,7 +131,7 @@ export function DataTable<T extends Record<string, any>>({
             variant="outline"
             size="sm"
             onClick={handleLastPage}
-            disabled={currentPage >= totalPages - 1}
+            disabled={currentPage === totalPages}
           >
             <ChevronsRight className="h-4 w-4" />
           </Button>
