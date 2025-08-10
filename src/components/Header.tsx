@@ -6,6 +6,8 @@ import {
     signOut,
 } from "@workos-inc/authkit-nextjs";
 import { Button } from "./ui/button";
+import { Navigation } from "@/components/Navigation";
+import Image from "next/image";
 
 export default async function Header() {
     const { user } = await withAuth();
@@ -16,35 +18,31 @@ export default async function Header() {
     };
 
     return (
-        <header
-            style={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                padding: "1rem",
-                borderBottom: "1px solid #ddd",
-            }}
-        >
-            {/* Left side title */}
-            <Link href="/" style={{ fontSize: "1.5rem", fontWeight: "bold" }}>
-                My Condo
-            </Link>
+        <header className="flex justify-between items-center p-4 border-b">
+            <a href="#">
+                <Image
+                    src="/logos/logo_orange_light.svg"
+                    alt="My Condo"
+                    width={160}
+                    height={40}
+                    className="h-8 w-auto"
+                />
+            </a>
 
-            {/* Right side buttons */}
             {!user ? (
-                <div style={{ display: "flex", gap: "1rem" }}>
-                    <Link href={await getSignInUrl()}>Sign In</Link>
-                    <Link href={await getSignUpUrl()}>Sign Up</Link>
+                <div className="flex gap-2">
+                    <Button asChild>
+                        <Link href={await getSignInUrl()}>Sign In</Link>
+                    </Button>
+                    <Button asChild className="bg-red-500">
+                        <Link href={await getSignUpUrl()}>Sign Up</Link>
+                    </Button>
                 </div>
             ) : (
-                <div style={{ display: "flex", gap: "1rem" }}>
-                    <div style={{ display: "flex", gap: "1rem" }}>
-                        <Link href="/users">Users</Link>
-                        <Link href="/properties">Properties</Link>
-                        <Link href="/units">Units</Link>
-                    </div>
+                <div className="flex gap-2 items-center">
+                    <Navigation />
                     <form action={handleSignOut}>
-                        <Button type="submit" className="bg-red-500">Sign Out</Button>
+                        <Button type="submit" variant="destructive">Sign Out</Button>
                     </form>
                 </div>
             )}

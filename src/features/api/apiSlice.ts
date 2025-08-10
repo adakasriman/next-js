@@ -8,6 +8,6 @@ export const baseApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ['Users', 'Properties', 'Units'],
+  tagTypes: ['Users', 'Properties', 'Units', 'PropertyManagerAssignments'],
   endpoints: () => ({}),
 });

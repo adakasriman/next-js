@@ -17,19 +17,19 @@ export async function GET(req: Request) {
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
-        const total = await prisma.properties.count();
-        const data = await prisma.properties.findMany({
+        // Get total count of users (for pagination metadata)
+        const total = await prisma.propertyManagerAssignments.count();
+
+        const data = await prisma.propertyManagerAssignments.findMany({
             skip,
             take: limit,
+            include: {
+                user: true
+            }
         })
-        const serializedProperties = data.map(property => ({
-            ...property,
-            total_documents_size_bytes: property.total_documents_size_bytes.toString(),
-            allowed_documents_size_bytes: property.allowed_documents_size_bytes.toString()
-        }));
         return NextResponse.json({
             success: true,
-            data: serializedProperties,
+            data: data,
             pagination: {
                 total,
                 totalPages: Math.ceil(total / limit),
@@ -48,7 +48,6 @@ export async function GET(req: Request) {
         )
     }
 }
-// Maximum file size (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024
 
 export async function POST(req: NextRequest) {
@@ -64,7 +63,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get('file') as File | null
 
     if (!file) {
-        return Response.json({ error: 'No file uploaded' }, { status: 400 })
+        return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
     const allowedTypes = [
@@ -97,15 +96,14 @@ export async function POST(req: NextRequest) {
 
         // Validate and transform data
         const createData = jsonData.map((item: any) => {
-            // Basic validation - customize based on your schema
-            if (!item.name || !item.city || !item.state || !item.pincode) {
-                throw new Error('Missing required field: name or city or state or pincode')
+            if (!item.property_id || !item.user_id) {
+                throw new Error('Missing required field: assignment_id or property_id or user_id')
             }
             return item;
         })
 
         // Insert data
-        const result = await prisma.properties.createMany({
+        const result = await prisma.propertyManagerAssignments.createMany({
             data: createData
         })
 

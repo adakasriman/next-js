@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "public"."User" (
+CREATE TABLE "public"."Users" (
     "user_id" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "google_auth_sub" TEXT,
@@ -21,11 +21,11 @@ CREATE TABLE "public"."User" (
     "id_number" TEXT,
     "id_type" TEXT,
 
-    CONSTRAINT "User_pkey" PRIMARY KEY ("user_id")
+    CONSTRAINT "Users_pkey" PRIMARY KEY ("user_id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."Property" (
+CREATE TABLE "public"."Properties" (
     "property_id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "street_address" TEXT,
@@ -47,11 +47,11 @@ CREATE TABLE "public"."Property" (
     "total_documents_size_bytes" BIGINT NOT NULL DEFAULT 0,
     "allowed_documents_size_bytes" BIGINT NOT NULL DEFAULT 1073741824,
 
-    CONSTRAINT "Property_pkey" PRIMARY KEY ("property_id")
+    CONSTRAINT "Properties_pkey" PRIMARY KEY ("property_id")
 );
 
 -- CreateTable
-CREATE TABLE "public"."Unit" (
+CREATE TABLE "public"."Units" (
     "unit_id" TEXT NOT NULL,
     "owner_id" TEXT,
     "property_id" TEXT NOT NULL,
@@ -70,17 +70,36 @@ CREATE TABLE "public"."Unit" (
     "total_due" INTEGER NOT NULL DEFAULT 0,
     "unit_balance" INTEGER NOT NULL DEFAULT 0,
 
-    CONSTRAINT "Unit_pkey" PRIMARY KEY ("unit_id")
+    CONSTRAINT "Units_pkey" PRIMARY KEY ("unit_id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."PropertyManagerAssignments" (
+    "assignment_id" TEXT NOT NULL,
+    "property_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "meta_status" TEXT,
+    "is_deleted" BOOLEAN NOT NULL DEFAULT false,
+    "created_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMPTZ(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PropertyManagerAssignments_pkey" PRIMARY KEY ("assignment_id")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "public"."User"("email");
+CREATE UNIQUE INDEX "Users_email_key" ON "public"."Users"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_supabase_auth_id_key" ON "public"."User"("supabase_auth_id");
+CREATE UNIQUE INDEX "Users_supabase_auth_id_key" ON "public"."Users"("supabase_auth_id");
 
 -- AddForeignKey
-ALTER TABLE "public"."Unit" ADD CONSTRAINT "Unit_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "public"."User"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "public"."Units" ADD CONSTRAINT "Units_owner_id_fkey" FOREIGN KEY ("owner_id") REFERENCES "public"."Users"("user_id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."Unit" ADD CONSTRAINT "Unit_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "public"."Property"("property_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "public"."Units" ADD CONSTRAINT "Units_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "public"."Properties"("property_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."PropertyManagerAssignments" ADD CONSTRAINT "PropertyManagerAssignments_property_id_fkey" FOREIGN KEY ("property_id") REFERENCES "public"."Properties"("property_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "public"."PropertyManagerAssignments" ADD CONSTRAINT "PropertyManagerAssignments_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "public"."Users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

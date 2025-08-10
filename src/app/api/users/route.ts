@@ -18,10 +18,10 @@ export async function GET(req: Request) {
     const skip = (page - 1) * limit;
 
     // Get total count of users (for pagination metadata)
-    const total = await prisma.user.count();
+    const total = await prisma.users.count();
 
     // Fetch paginated data
-    const data = await prisma.user.findMany({
+    const data = await prisma.users.findMany({
       skip,
       take: limit,
     });
@@ -124,7 +124,7 @@ export async function POST(req: NextRequest) {
       .map((item: any) => item.email)
       .filter(Boolean);
 
-    const existingUsers = await prisma.user.findMany({
+    const existingUsers = await prisma.users.findMany({
       where: {
         email: { in: emailsToCheck },
       },
@@ -153,7 +153,7 @@ export async function POST(req: NextRequest) {
     });
 
     // Insert data
-    const result = await prisma.user.createMany({
+    const result = await prisma.users.createMany({
       data: createData,
     });
 

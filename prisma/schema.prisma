@@ -7,13 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  user_id         String  @id @default(cuid())
-  email           String  @unique                         
-  google_auth_sub String?
-  first_name      String?
-  last_name       String?
-  phone_number    String?
+model Users {
+  user_id                String @id @default(uuid())
+  email                  String @unique   
+  google_auth_sub        String?
+  first_name             String?
+  last_name              String?
+  phone_number           String?
 
   user_type              String?
   meta_status            String?
@@ -29,11 +29,13 @@ model User {
   address                String?
   id_number              String?
   id_type                String?
-  Unit                   Unit[]
+  Units                   Units[]
+
+  PropertyManagerAssignments PropertyManagerAssignments[]
 }
 
-model Property {
-  property_id                     String   @id @default(cuid())
+model Properties {
+  property_id                     String   @id @default(uuid())
   name                            String
   street_address                  String?
   locality                        String?
@@ -53,17 +55,19 @@ model Property {
   total_documents_count           Int      @default(0)
   total_documents_size_bytes      BigInt   @default(0)
   allowed_documents_size_bytes    BigInt   @default(1073741824)
-  Unit                            Unit[]
+  Units                            Units[]
+
+  PropertyManagerAssignments PropertyManagerAssignments[]
 }
 
-model Unit {
-  unit_id String @id @default(cuid())
+model Units {
+  unit_id String @id @default(uuid())
 
   owner_id String?
-  owner    User?   @relation(fields: [owner_id], references: [user_id], onDelete: SetNull)
+  owner    Users?   @relation(fields: [owner_id], references: [user_id], onDelete: SetNull)
 
   property_id String
-  property    Property @relation(fields: [property_id], references: [property_id], onDelete: Cascade)
+  property    Properties @relation(fields: [property_id], references: [property_id], onDelete: Cascade)
 
   unit_number_or_name     String
   floor_number            String?
@@ -79,4 +83,20 @@ model Unit {
   vehicle_parking_space   String?
   total_due               Int      @default(0)
   unit_balance            Int      @default(0)
+}
+
+
+model PropertyManagerAssignments {
+  assignment_id String   @id @default(uuid())
+  
+  property_id   String
+  property      Properties @relation(fields: [property_id], references: [property_id], onDelete: Cascade)
+  
+  user_id       String
+  user          Users     @relation(fields: [user_id], references: [user_id], onDelete: Cascade)
+
+  meta_status   String?
+  is_deleted    Boolean  @default(false)
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+  updated_at    DateTime @default(now()) @db.Timestamptz(6)
 }

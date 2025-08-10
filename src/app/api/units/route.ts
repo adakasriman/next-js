@@ -12,16 +12,15 @@ export async function GET(req: Request) {
             return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
         }
 
-
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get('page') || '1');
         const limit = parseInt(searchParams.get('limit') || '10');
         const skip = (page - 1) * limit;
 
         // Get total count of users (for pagination metadata)
-        const total = await prisma.unit.count();
+        const total = await prisma.units.count();
 
-        const data = await prisma.unit.findMany({
+        const data = await prisma.units.findMany({
             skip,
             take: limit,
         })
@@ -77,8 +76,6 @@ export async function POST(req: NextRequest) {
         )
     }
 
-
-    // Validate file size
     if (file.size > MAX_FILE_SIZE) {
         return Response.json(
             { error: `File too large. Maximum size is ${MAX_FILE_SIZE / 1024 / 1024}MB` },
@@ -96,15 +93,14 @@ export async function POST(req: NextRequest) {
 
         // Validate and transform data
         const createData = jsonData.map((item: any) => {
-            // // Basic validation - customize based on your schema
-            // if (!item.owner || !item.property || !item.unit_number_or_name) {
-            //     throw new Error('Missing required field: owner or property or unit_number_or_name')
-            // }
+            if (!item.owner_id || !item.property_id || !item.unit_number_or_name) {
+                throw new Error('Missing required field: owner_id or property_id or unit_number_or_name')
+            }
             return item;
         })
 
         // Insert data
-        const result = await prisma.unit.createMany({
+        const result = await prisma.units.createMany({
             data: createData
         })
 
