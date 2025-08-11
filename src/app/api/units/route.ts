@@ -2,6 +2,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import { withAuth } from "@workos-inc/authkit-nextjs"
 import { prisma } from "@/lib/prisma"
 import * as XLSX from 'xlsx';
+import { handleApiError } from '@/lib/handleApiError';
 
 export async function GET(req: Request) {
     try {
@@ -109,17 +110,7 @@ export async function POST(req: NextRequest) {
             created: result,
         })
     } catch (error) {
-        console.error('File processing error:', error)
-
-        let errorMessage = 'Failed to process file'
-        if (error instanceof Error) {
-            errorMessage = error.message
-        }
-
-        return Response.json(
-            { error: errorMessage },
-            { status: error instanceof Error && error.message.includes('Missing required field') ? 400 : 500 }
-        )
+        return handleApiError(error, 'Failed to process file'); 
     }
 }
 
