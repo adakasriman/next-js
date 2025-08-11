@@ -1,4 +1,5 @@
 export const userHeaders = [
+    { header: "User ID", accessorKey: "user_id" },
     { header: "Email", accessorKey: "email" },
     { header: "First Name", accessorKey: "first_name" },
     { header: "Last Name", accessorKey: "last_name" },

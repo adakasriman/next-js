@@ -1,4 +1,5 @@
 'use client';
+
 import {
   Dialog,
   DialogTrigger,
@@ -10,11 +11,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import React, { useState, useRef } from 'react';
-import { useCreateUserMutation } from '@/features/users/usersApi';
 import toast from "react-hot-toast";
 
-export default function BulkUploadModal() {
-  const [createUser] = useCreateUserMutation();
+interface BulkUploadDialogProps {
+  title: string;
+  description: string;
+  onUpload: (formData: FormData) => Promise<any>; // Upload function
+  triggerLabel?: string;
+}
+
+export default function BulkUploadDialog({
+  title,
+  description,
+  onUpload,
+  triggerLabel = "Bulk Upload",
+}: BulkUploadDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState('');
@@ -54,12 +65,12 @@ export default function BulkUploadModal() {
       const formData = new FormData();
       formData.append('file', file);
 
-      const result = await createUser(formData);
-      if (result.data) {
-        setFile(null);
-        toast.success("Excel submitted successfully");
-        handleDialogClose();
+      const result = await onUpload(formData);
 
+      if (result?.data) {
+        setFile(null);
+        toast.success("File uploaded successfully");
+        handleDialogClose();
         if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
         setError('Failed to upload file.');
@@ -71,11 +82,10 @@ export default function BulkUploadModal() {
 
   const handleDialogClose = () => {
     setFile(null);
-    setError?.('');
+    setError('');
     setIsOpen(false);
     if (fileInputRef.current) fileInputRef.current.value = '';
   };
-
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => {
@@ -85,15 +95,15 @@ export default function BulkUploadModal() {
       }
     }}>
       <DialogTrigger asChild>
-        <Button variant="outline">Bulk Upload</Button>
+        <Button variant="outline">{triggerLabel}</Button>
       </DialogTrigger>
 
       <DialogContent className="sm:max-w-md">
         <DialogTitle className="text-xl font-semibold">
-          Bulk Upload Users
+          {title}
         </DialogTitle>
         <DialogDescription className="mb-4">
-          Upload an Excel (.xlsx, .xls) or CSV (.csv) file to bulk import users.
+          {description}
         </DialogDescription>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -120,6 +130,5 @@ export default function BulkUploadModal() {
         </form>
       </DialogContent>
     </Dialog>
-
   );
 }
