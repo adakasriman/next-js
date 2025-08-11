@@ -43,7 +43,6 @@ export const GET = requireAuth(async (req: Request) => {
         )
     }
 });
-const MAX_FILE_SIZE = 5 * 1024 * 1024
 
 export const POST = requireAuth(async (req: NextRequest) => {
 

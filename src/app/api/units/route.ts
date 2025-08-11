@@ -4,7 +4,7 @@ import { handleApiError } from '@/lib/handleApiError';
 import { requireAuth } from '@/lib/requireAuth';
 import { parseUpload } from '@/lib/parseUpload';
 
-export const GET = requireAuth(async (req: Request) => {
+export const GET = requireAuth(async (req: Request) => {    
     try {
         const { searchParams } = new URL(req.url);
         const page = parseInt(searchParams.get('page') || '1');
