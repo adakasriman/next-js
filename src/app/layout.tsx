@@ -1,4 +1,5 @@
 import './globals.css';
+import React from 'react';
 import Header from '@/components/Header';
 import AuthProviderWrapper from '@/app/providers/AuthProviderWrapper';
 import { ReduxProvider } from '@/app/providers';
@@ -9,6 +10,7 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  
   return (
     <html lang="en">
       <body>

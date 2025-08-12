@@ -27,11 +27,17 @@ export const PropertyManagerAssignmentsList = () => {
     }, [data]);
 
     if (isLoading) {
-        return <div style={{ padding: '1rem' }}>Loading units...</div>;
+        return <div className="p-4">Loading property manager assignments...</div>;
     }
 
     if (isError) {
-        return <div style={{ padding: '1rem', color: 'red' }}>{error?.data?.message || 'Failed to fetch units'}</div>;
+        return (
+            <div className="p-4 text-red-500">
+                {error
+                    ? <pre>{JSON.stringify(error, null, 2)}</pre>
+                    : 'Failed to fetch property manager assignments'}
+            </div>
+        );
     }
 
     const handlePageChange = (newPage: number) => {

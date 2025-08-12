@@ -27,14 +27,14 @@ export const UserList = () => {
     }, [data]);
 
     if (isLoading) {
-        return <div style={{ padding: '1rem' }}>Loading users...</div>;
+        return <div className="p-4">Loading users...</div>;
     }
 
     if (isError) {
         return (
-            <div style={{ padding: '1rem', color: 'red' }}>
-                {error && 'status' in error
-                    ? (error.data as string)
+            <div className="p-4 text-red-500">
+                {error
+                    ? <pre>{JSON.stringify(error, null, 2)}</pre>
                     : 'Failed to fetch users'}
             </div>
         );

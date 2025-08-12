@@ -73,7 +73,7 @@ export default function BulkUploadDialog({
         handleDialogClose();
         if (fileInputRef.current) fileInputRef.current.value = '';
       } else {
-        setError('Failed to upload file.');
+        setError(result?.error?.data?.error || 'Failed to upload file.');
       }
     } catch (error: any) {
       setError('Error uploading file.');

@@ -1,7 +1,5 @@
 import { NextResponse, NextRequest } from 'next/server'
-import { withAuth } from "@workos-inc/authkit-nextjs"
 import { prisma } from "@/lib/prisma"
-import * as XLSX from 'xlsx';
 import { requireAuth } from '@/lib/requireAuth';
 import { parseUpload } from '@/lib/parseUpload';
 import { handleApiError } from '@/lib/handleApiError';
